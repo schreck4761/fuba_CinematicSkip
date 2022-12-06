@@ -1,0 +1,13 @@
+## Interface: 100002
+## Interface-Classic: 11403
+## Interface-Wrath: 30400
+## Title: fuba's |cff0080ffSkip Cinematic|r
+## Version: @project-version@
+## Author: fuba
+## Notes: fuba's personal Cinematic Skipper
+## SavedVariables: fubaSkipCinematicDB
+## X-Category: fuba
+
+## X-Curse-Project-ID: 298530
+
+core.lua
