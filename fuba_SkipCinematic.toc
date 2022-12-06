@@ -8,6 +8,6 @@
 ## SavedVariables: fubaSkipCinematicDB
 ## X-Category: fuba
 
-## X-Curse-Project-ID: 298530
+## X-Curse-Project-ID: 721741
 
 core.lua
