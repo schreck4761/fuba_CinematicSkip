@@ -4,6 +4,7 @@
 ## Title: fuba's |cff0080ffSkip Cinematic|r
 ## Version: @project-version@
 ## Author: fuba
+## IconTexture: Interface\AddOns\fuba_CinematicSkip\fubaLogo
 ## Notes: fuba's personal Cinematic Skipper
 ## SavedVariables: fubaSkipCinematicDB
 ## X-Category: fuba
