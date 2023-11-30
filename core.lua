@@ -11,7 +11,7 @@ local DefaultDB = {
   skipThisMovie = {},
   neverSkipMovie = {},
   lastMovieID = 0,
-  version = 1,
+  version = 2,
 }
 
 local function CreateDatabase()
@@ -33,9 +33,10 @@ if not fubaSkipCinematicDB then
   DebugPrint("Database: Set Default Database because empty")
 end
 
-if fubaSkipCinematicDB.version and fubaSkipCinematicDB.version < DefaultDB.version then
+if fubaSkipCinematicDB.version and fubaSkipCinematicDB.version ~= DefaultDB.version then
   -- do something if "Database Version" is an older version and maybe need attention?!
-  DebugPrint("Database: Old version found")
+  DebugPrint("\nDatabase: unsupported Database Version detected.\nDatabase will be resetted now.\nThis can result in some Cinematics will play again \"once\"!")
+	ReCreateDatabase()
 end
 
 MovieFrame:HookScript("OnEvent", function(self, event, ...)
@@ -72,16 +73,19 @@ CinematicFrame:HookScript("OnEvent", function(self, event, ...)
     local MapID = C_Map.GetBestMapForUnit("player")
     if not MapID then return end
     local subZoneText = GetSubZoneText() or ""
+		local Name, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, instanceID, instanceGroupSize, LfgDungeonID = GetInstanceInfo()
 
     local skipScenario = true
     local isInstance, instanceType = IsInInstance()
     if instanceType == "scenario" then skipScenario = fubaSkipCinematicDB.options.skipInScenario end
     if (not fubaSkipCinematicDB.options.skipAlreadySeen) or (fubaSkipCinematicDB.options.skipOnlyInInstance and (not isInstance)) or (not skipScenario) then return end
 
-    if fubaSkipCinematicDB.skipThisCinematic[MapID..subZoneText] then
+    --if fubaSkipCinematicDB.skipThisCinematic[MapID..subZoneText] then
+    if fubaSkipCinematicDB.skipThisCinematic[MapID..instanceID] then
       CinematicFrame_CancelCinematic()
     else
-      fubaSkipCinematicDB.skipThisCinematic[MapID..subZoneText] = true
+      --fubaSkipCinematicDB.skipThisCinematic[MapID..subZoneText] = true
+      fubaSkipCinematicDB.skipThisCinematic[MapID..instanceID] = true
     end
 
   elseif event == "CINEMATIC_STOP" then
