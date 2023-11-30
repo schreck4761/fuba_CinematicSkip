@@ -35,7 +35,7 @@ end
 
 if fubaSkipCinematicDB.version and fubaSkipCinematicDB.version ~= DefaultDB.version then
   -- do something if "Database Version" is an older version and maybe need attention?!
-  DebugPrint("\nDatabase: unsupported Database Version detected.\nDatabase will be resetted now.\nThis can result in some Cinematics will play again \"once\"!")
+  DebugPrint("\nDatabase: unsupported Database Version detected.\nDatabase will be resetted now.\This will result in some Cinematics will play again \"once\" but will work properly again after!")
 	ReCreateDatabase()
 end
 
