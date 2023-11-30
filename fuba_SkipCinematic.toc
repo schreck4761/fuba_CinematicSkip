@@ -1,10 +1,10 @@
-## Interface: 100105
-## Interface-Classic: 11404
-## Interface-Wrath: 30402
+## Interface: 100200
+## Interface-Classic: 11500
+## Interface-Wrath: 30403
 ## Title: fuba's |cff0080ffSkip Cinematic|r
 ## Version: @project-version@
 ## Author: fuba
-## IconTexture: Interface\AddOns\fuba_CinematicSkip\fubaLogo
+## IconTexture: Interface\AddOns\fuba_SkipCinematic\fubaLogo
 ## Notes: fuba's personal Cinematic Skipper
 ## SavedVariables: fubaSkipCinematicDB
 ## X-Category: fuba
