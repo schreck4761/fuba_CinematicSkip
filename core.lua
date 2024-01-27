@@ -14,6 +14,22 @@ local DefaultDB = {
   version = 2,
 }
 
+-- hopefully fixed for Classic and Wrath -- thanks to Road-block!
+local MovieFrame_StopMovie = MovieFrame_StopMovie or function(frame)
+  if MovieFrame_OnMovieFinished then
+    MovieFrame_OnMovieFinished(MovieFrame)
+  else
+    GameMovieFinished()
+    MovieFrameSubtitleString:Hide()
+    MovieFrame:StopMovie()
+    WorldFrame:Show()
+    if ( MovieFrame.uiParentShown ) then
+      UIParent:Show()
+      SetUIVisibility(true)
+    end
+  end
+end
+
 local function CreateDatabase()
   if (not fubaSkipCinematicDB) or (fubaSkipCinematicDB == nil) then fubaSkipCinematicDB = DefaultDB end
 end
