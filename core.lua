@@ -32,25 +32,25 @@ local MovieFrame_StopMovie = MovieFrame_StopMovie or function(frame)
 end
 
 local function CreateDatabase()
-  if (not fubaSkipCinematicDB) or (fubaSkipCinematicDB == nil) then fubaSkipCinematicDB = DefaultDB end
+  if (not fubaSkipCinematicDBTim) or (fubaSkipCinematicDBTim == nil) then fubaSkipCinematicDBTim = DefaultDB end
 end
 
 local function ReCreateDatabase()
-  fubaSkipCinematicDB = DefaultDB
+  fubaSkipCinematicDBTim = DefaultDB
 end
 
 local function DebugPrint(debugtext)
-  if fubaSkipCinematicDB and fubaSkipCinematicDB.options.debug then
+  if fubaSkipCinematicDBTim and fubaSkipCinematicDBTim.options.debug then
     DEFAULT_CHAT_FRAME:AddMessage("|cFF0080FFfubaDebug\[|r"..debugtext.."|cFF0080FF\]")
   end
 end
 
-if not fubaSkipCinematicDB then
+if not fubaSkipCinematicDBTim then
   CreateDatabase()
   DebugPrint("Database: Set Default Database because empty")
 end
 
-if fubaSkipCinematicDB.version and fubaSkipCinematicDB.version ~= DefaultDB.version then
+if fubaSkipCinematicDBTim.version and fubaSkipCinematicDBTim.version ~= DefaultDB.version then
   -- do something if "Database Version" is an older version and maybe need attention?!
   DebugPrint("\nDatabase: unsupported Database Version detected.\nDatabase will be resetted now.\This will result in some Cinematics will play again \"once\" but will work properly again after!")
 	ReCreateDatabase()
@@ -62,18 +62,18 @@ MovieFrame:HookScript("OnEvent", function(self, event, ...)
     if IsModifierKeyDown() then return end -- DO NOT SKIP if any ModifierKey is pressed (ALT, CTRL or SHIFT)
     local movieID = ...
     if (not movieID) then return end
-    fubaSkipCinematicDB.lastMovieID = movieID -- save last MovieID for further actions maybe?!
+    fubaSkipCinematicDBTim.lastMovieID = movieID -- save last MovieID for further actions maybe?!
     DebugPrint("Event: PLAY_MOVIE with ID: "..movieID);
 
     local skipScenario = true
     local isInstance, instanceType = IsInInstance()
-    if instanceType == "scenario" then skipScenario = fubaSkipCinematicDB.options.skipInScenario end
-    if (not fubaSkipCinematicDB.options.skipAlreadySeen) or (fubaSkipCinematicDB.options.skipOnlyInInstance and (not isInstance)) or (not skipScenario) then return end
+    if instanceType == "scenario" then skipScenario = fubaSkipCinematicDBTim.options.skipInScenario end
+    if (not fubaSkipCinematicDBTim.options.skipAlreadySeen) or (fubaSkipCinematicDBTim.options.skipOnlyInInstance and (not isInstance)) or (not skipScenario) then return end
 
-    if fubaSkipCinematicDB.skipThisMovie[movieID] then
+    if fubaSkipCinematicDBTim.skipThisMovie[movieID] then
       MovieFrame_StopMovie(self)
-    else if (not fubaSkipCinematicDB.options.lockSkipList) then
-      fubaSkipCinematicDB.skipThisMovie[movieID] = true
+    elseif (not fubaSkipCinematicDBTim.options.lockSkipList) then
+      fubaSkipCinematicDBTim.skipThisMovie[movieID] = true
     end
 
   elseif event == "STOP_MOVIE" then
@@ -94,15 +94,15 @@ CinematicFrame:HookScript("OnEvent", function(self, event, ...)
 
     local skipScenario = true
     local isInstance, instanceType = IsInInstance()
-    if instanceType == "scenario" then skipScenario = fubaSkipCinematicDB.options.skipInScenario end
-    if (not fubaSkipCinematicDB.options.skipAlreadySeen) or (fubaSkipCinematicDB.options.skipOnlyInInstance and (not isInstance)) or (not skipScenario) then return end
+    if instanceType == "scenario" then skipScenario = fubaSkipCinematicDBTim.options.skipInScenario end
+    if (not fubaSkipCinematicDBTim.options.skipAlreadySeen) or (fubaSkipCinematicDBTim.options.skipOnlyInInstance and (not isInstance)) or (not skipScenario) then return end
 
-    --if fubaSkipCinematicDB.skipThisCinematic[MapID..subZoneText] then
-    if fubaSkipCinematicDB.skipThisCinematic[MapID..instanceID] then
+    --if fubaSkipCinematicDBTim.skipThisCinematic[MapID..subZoneText] then
+    if fubaSkipCinematicDBTim.skipThisCinematic[MapID..instanceID] then
       CinematicFrame_CancelCinematic()
-    else if (not fubaSkipCinematicDB.options.lockSkipList) then
-      --fubaSkipCinematicDB.skipThisCinematic[MapID..subZoneText] = true
-      fubaSkipCinematicDB.skipThisCinematic[MapID..instanceID] = true
+    elseif (not fubaSkipCinematicDBTim.options.lockSkipList) then
+      --fubaSkipCinematicDBTim.skipThisCinematic[MapID..subZoneText] = true
+      fubaSkipCinematicDBTim.skipThisCinematic[MapID..instanceID] = true
     end
 
   elseif event == "CINEMATIC_STOP" then
@@ -114,53 +114,75 @@ end)
 _G.SLASH_FUBACANCELCINEMATIC1 = '/fcc'
 SlashCmdList.FUBACANCELCINEMATIC = function(msg)
   if not msg or type(msg) ~= "string" or msg == "" or msg == "help" then
-    print("|cff0080ff\nfuba's Cancel Cinematic Usage:\n|r============================================================\n|cff0080ff/fcc|r or |cff0080ff/fcc help|r - Show this message\n|cff0080ff/fcc all|r - Toggle \"Addon fuctionality\"\n|cff0080ff/fcc instance|r - Toggle \"Inctance Only\"\n|cff0080ff/fcc scenario|r - Toggle \"Skip also in Scenario\"\n\n\"Hold Down\" a Modifier Key (SHIFT, ALT or CTRL)\nwill \"temporary\" disable ANY Skip!\n|r============================================================")
+    print("|cff0080ff\nfuba's Cancel Cinematic Usage:\n|r============================================================\n|cff0080ff/fcc|r or |cff0080ff/fcc help|r - Show this message\n|cff0080ff/fcc all|r - Toggle \"Addon fuctionality\"\n|cff0080ff/fcc lockSkipList|r - Toggle \"Stop adding new movies to the skip list\"\n|cff0080ff/fcc instance|r - Toggle \"Instance Only\"\n|cff0080ff/fcc scenario|r - Toggle \"Skip also in Scenario\"\n\n\"Hold Down\" a Modifier Key (SHIFT, ALT or CTRL)\nwill \"temporary\" disable ANY Skip!\n|r============================================================")
     return
   end
   local cmd, arg = strsplit(" ", msg:trim():lower()) -- Try splitting by space
 
   if cmd == "all" then
-    if fubaSkipCinematicDB.options.skipAlreadySeen then
-      fubaSkipCinematicDB.options.skipAlreadySeen = false
+    if fubaSkipCinematicDBTim.options.skipAlreadySeen then
+      fubaSkipCinematicDBTim.options.skipAlreadySeen = false
       print("|cff0080ff[fuba's Cancel Cinematic]|r Overall: |cffFF0000Disabled|r")
     else
-      fubaSkipCinematicDB.options.skipAlreadySeen = true
+      fubaSkipCinematicDBTim.options.skipAlreadySeen = true
       print("|cff0080ff[fuba's Cancel Cinematic]|r Overall: |cff00FF00Enabled|r")
     end
-  else if cmd == "lockSkipList" then
-    if fubaSkipCinematicDB.options.lockSkipList then
-      fubaSkipCinematicDB.options.lockSkipList = false
-      print("|cff0080ff[fuba's Cancel Cinematic]|r Lock Skip List: |cffFF0000Disabled|r")
-    else
-      fubaSkipCinematicDB.options.lockSkipList = false
-      print("|cff0080ff[fuba's Cancel Cinematic]|r Lock Skip List: |cffFF0000Enabled|r")
-    end
   elseif cmd == "instance" then
-    if fubaSkipCinematicDB.options.skipOnlyInInstance then
-      fubaSkipCinematicDB.options.skipOnlyInInstance = false
+    if fubaSkipCinematicDBTim.options.skipOnlyInInstance then
+      fubaSkipCinematicDBTim.options.skipOnlyInInstance = false
       print("|cff0080ff[fuba's Cancel Cinematic]|r Skip ONLY in Instance: |cffFF0000Disabled|r")
     else
-      fubaSkipCinematicDB.options.skipOnlyInInstance = true
+      fubaSkipCinematicDBTim.options.skipOnlyInInstance = true
       print("|cff0080ff[fuba's Cancel Cinematic]|r Skip ONLY in Instance: |cff00FF00Enabled|r")
     end
   elseif cmd == "scenario" then
-    if fubaSkipCinematicDB.options.skipInScenario then
-      fubaSkipCinematicDB.options.skipInScenario = false
+    if fubaSkipCinematicDBTim.options.skipInScenario then
+      fubaSkipCinematicDBTim.options.skipInScenario = false
       print("|cff0080ff[fuba's Cancel Cinematic]|r Skip also in Scenario: |cffFF0000Disabled|r")
     else
-      fubaSkipCinematicDB.options.skipInScenario = true
+      fubaSkipCinematicDBTim.options.skipInScenario = true
       print("|cff0080ff[fuba's Cancel Cinematic]|r Skip also in Scenario: |cff00FF00Enabled|r")
     end
   elseif cmd == "debug" then
-    if fubaSkipCinematicDB.options.debug then
-      fubaSkipCinematicDB.options.debug = false
+    if fubaSkipCinematicDBTim.options.debug then
+      fubaSkipCinematicDBTim.options.debug = false
       print("|cff0080ff[fuba's Cancel Cinematic]|r Debug Messages: |cffFF0000Disabled|r")
     else
-      fubaSkipCinematicDB.options.debug = true
+      fubaSkipCinematicDBTim.options.debug = true
       print("|cff0080ff[fuba's Cancel Cinematic]|r Debug Messages: |cff00FF00Enabled|r")
     end
   elseif cmd == "developer" and arg and arg == "rdb" then
     ReCreateDatabase()
     print("|cff0080ff[fuba's Cancel Cinematic]|r Reseted Databse to Default")
+  elseif cmd == "lockskiplist" then
+    if fubaSkipCinematicDBTim.options.lockSkipList then
+      fubaSkipCinematicDBTim.options.lockSkipList = false
+      print("|cff0080ff[fuba's Cancel Cinematic]|r Lock Skip List: |cffFF0000Disabled|r")
+    else
+      fubaSkipCinematicDBTim.options.lockSkipList = true
+      print("|cff0080ff[fuba's Cancel Cinematic]|r Lock Skip List: |cff00FF00Enabled|r")
+    end
+  elseif cmd == "clearskiplist" then
+    fubaSkipCinematicDBTim.skipThisMovie = {}
+    print("|cff0080ff[fuba's Cancel Cinematic]|r Cleared skip list.")
+  elseif cmd == "addlastmovie" then
+    if fubaSkipCinematicDBTim.lastMovieID then
+      fubaSkipCinematicDBTim.skipThisMovie[fubaSkipCinematicDBTim.lastMovieID] = true
+      print("|cff0080ff[fuba's Cancel Cinematic]|r Added last movie to skip list:", fubaSkipCinematicDBTim.lastMovieID)
+    else
+      print("|cff0080ff[fuba's Cancel Cinematic]|r No movie id found to add.")
+    end
+  elseif cmd == "removemovie" and arg then
+    local movieID = tonumber(arg)
+    if fubaSkipCinematicDBTim.skipThisMovie[movieID] then
+      fubaSkipCinematicDBTim.skipThisMovie[movieID] = nil
+      print("|cff0080ff[fuba's Cancel Cinematic]|r Removing movie with id:", arg)
+    else
+      print("|cff0080ff[fuba's Cancel Cinematic]|r Didn't find movie with id:", arg)
+    end
+  elseif cmd == "addmovie" and arg then
+    local movieID = tonumber(arg)
+    fubaSkipCinematicDBTim.skipThisMovie[movieID] = true
+    print("|cff0080ff[fuba's Cancel Cinematic]|r Adding movie with id:", arg)
   end
 end
