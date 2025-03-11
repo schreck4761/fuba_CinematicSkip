@@ -6,6 +6,7 @@ local DefaultDB = {
     skipAlreadySeen = true,
     skipOnlyInInstance = false,
     skipInScenario = false,
+    lockSkipList = false,
   },
   skipThisCinematic = {},
   skipThisMovie = {},
@@ -71,7 +72,7 @@ MovieFrame:HookScript("OnEvent", function(self, event, ...)
 
     if fubaSkipCinematicDB.skipThisMovie[movieID] then
       MovieFrame_StopMovie(self)
-    else
+    else if (not fubaSkipCinematicDB.options.lockSkipList) then
       fubaSkipCinematicDB.skipThisMovie[movieID] = true
     end
 
@@ -99,7 +100,7 @@ CinematicFrame:HookScript("OnEvent", function(self, event, ...)
     --if fubaSkipCinematicDB.skipThisCinematic[MapID..subZoneText] then
     if fubaSkipCinematicDB.skipThisCinematic[MapID..instanceID] then
       CinematicFrame_CancelCinematic()
-    else
+    else if (not fubaSkipCinematicDB.options.lockSkipList) then
       --fubaSkipCinematicDB.skipThisCinematic[MapID..subZoneText] = true
       fubaSkipCinematicDB.skipThisCinematic[MapID..instanceID] = true
     end
@@ -125,6 +126,14 @@ SlashCmdList.FUBACANCELCINEMATIC = function(msg)
     else
       fubaSkipCinematicDB.options.skipAlreadySeen = true
       print("|cff0080ff[fuba's Cancel Cinematic]|r Overall: |cff00FF00Enabled|r")
+    end
+  else if cmd == "lockSkipList" then
+    if fubaSkipCinematicDB.options.lockSkipList then
+      fubaSkipCinematicDB.options.lockSkipList = false
+      print("|cff0080ff[fuba's Cancel Cinematic]|r Lock Skip List: |cffFF0000Disabled|r")
+    else
+      fubaSkipCinematicDB.options.lockSkipList = false
+      print("|cff0080ff[fuba's Cancel Cinematic]|r Lock Skip List: |cffFF0000Enabled|r")
     end
   elseif cmd == "instance" then
     if fubaSkipCinematicDB.options.skipOnlyInInstance then
